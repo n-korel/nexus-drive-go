@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 
+	"github.com/n-korel/nexus-drive-go/shared/types"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -21,4 +22,5 @@ type TripRepository interface {
 
 type TripService interface {
 	CreateTrip(ctx context.Context, fare *RideFareModel) (*TripModel, error)
+	GetRoute(ctx context.Context, pickup, destination *types.Coordinate) (*types.OsrmApiResponse, error)
 }
