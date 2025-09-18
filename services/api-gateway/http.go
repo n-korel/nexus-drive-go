@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/n-korel/nexus-drive-go/services/api-gateway/grpc_clients"
 	"github.com/n-korel/nexus-drive-go/shared/contracts"
 )
 
@@ -28,6 +29,15 @@ func handleTripPreview(w http.ResponseWriter, r *http.Request) {
 
 	jsonBody, _ := json.Marshal(reqBody)
 	reader := bytes.NewReader(jsonBody)
+
+	tripService, err := grpc_clients.NewTripServiceClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+
+	defer tripService.Close()
+
 
 	// CALL TRIP SERVICE
 	resp, err := http.Post("http://trip-service:8083/preview", "application/json", reader)
