@@ -14,7 +14,7 @@ import (
 	grpcserver "google.golang.org/grpc"
 )
 
-var GrpcAddr = ":9093"
+var GrpcAddr = ":9083"
 
 func main() {
 	inMemoryRepo := repository.NewInMemoryRepository()
