@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/n-korel/nexus-drive-go/services/api-gateway/grpc_clients"
 	"github.com/n-korel/nexus-drive-go/shared/contracts"
-	"github.com/n-korel/nexus-drive-go/shared/util"
+	"github.com/n-korel/nexus-drive-go/shared/proto/driver"
 )
 
 var upgrader = websocket.Upgrader{
@@ -64,24 +65,40 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	type Driver struct {
-		Id             string `json:"id"`
-		Name           string `json:"name"`
-		ProfilePicture string `json:"profilePicture"`
-		CarPlate       string `json:"carPlate"`
-		PackageSlug    string `json:"packageSlug"`
+	ctx := r.Context()
+
+	// Create new client for each connection
+	driverService, err := grpc_clients.NewDriverServiceClient()
+	if err != nil {
+		log.Fatal(err)
 	}
-	
+
+	// Closing connections
+	defer func() {
+		driverService.Client.UnregisterDriver(ctx, &driver.RegisterDriverRequest{
+			DriverID:    userID,
+			PackageSlug: packageSlug,
+		})
+
+		driverService.Close()
+		
+		log.Println("Driver unregistered: ", userID)
+	}()
+
+
+	// CALL DRIVER SERVICE
+	driverData, err := driverService.Client.RegisterDriver(ctx, &driver.RegisterDriverRequest{
+		DriverID:    userID,
+		PackageSlug: packageSlug,
+	})
+	if err != nil {
+		log.Printf("Error registering driver: %v", err)
+		return
+	}
 
 	msg := contracts.WSMessage{
 		Type: "driver.cmd.register",
-		Data: Driver{
-			Id:             userID,
-			Name:           "Nick",
-			ProfilePicture: util.GetRandomAvatar(1),
-			CarPlate:       "CarLuxury",
-			PackageSlug:    packageSlug,
-		},
+		Data: driverData.Driver,
 	}
 
 
