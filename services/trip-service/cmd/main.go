@@ -11,12 +11,16 @@ import (
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/grpc"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/repository"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/service"
+	"github.com/n-korel/nexus-drive-go/shared/env"
+	"github.com/n-korel/nexus-drive-go/shared/messaging"
 	grpcserver "google.golang.org/grpc"
 )
 
 var GrpcAddr = ":9083"
 
 func main() {
+	rabbitMqURI := env.GetString("RABBITMQ_URI", "amqp://guest:guest@rabbitmq:5672/")
+	
 	inMemoryRepo := repository.NewInMemoryRepository()
 	serv := service.NewService(inMemoryRepo)
 
@@ -34,6 +38,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	// RabbitMQ connection
+	rabbitmq, err := messaging.NewRabbitMQ(rabbitMqURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rabbitmq.Close()
+
+	log.Println("Starting RabbitMQ connection")
 
 	// Starting gRPC server
 	grpcServer := grpcserver.NewServer()

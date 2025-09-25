@@ -8,12 +8,15 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/n-korel/nexus-drive-go/shared/env"
+	"github.com/n-korel/nexus-drive-go/shared/messaging"
 	grpcserver "google.golang.org/grpc"
 )
 
 var GrpcAddr = ":9082"
 
 func main() {
+	rabbitMqURI := env.GetString("RABBITMQ_URI", "amqp://guest:guest@rabbitmq:5672/")
 
 	serv := NewService()
 
@@ -31,6 +34,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	// RabbitMQ connection
+	rabbitmq, err := messaging.NewRabbitMQ(rabbitMqURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rabbitmq.Close()
+
+	log.Println("Starting RabbitMQ connection")
 
 	// Starting gRPC server
 	grpcServer := grpcserver.NewServer()
