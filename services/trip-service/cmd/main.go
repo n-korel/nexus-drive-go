@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/events"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/grpc"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/repository"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/service"
@@ -48,10 +49,12 @@ func main() {
 
 	log.Println("Starting RabbitMQ connection")
 
+	publisher := events.NewTripEventPublisher(rabbitmq)
+
 	// Starting gRPC server
 	grpcServer := grpcserver.NewServer()
 
-	grpc.NewGRPCHandler(grpcServer, serv)
+	grpc.NewGRPCHandler(grpcServer, serv, publisher)
 
 	log.Printf("Starting gRPC server Trip service on port %s", listener.Addr().String())
 
