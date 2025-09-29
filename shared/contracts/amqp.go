@@ -1,12 +1,12 @@
 package contracts
 
-// AmqpMessage is the message structure for AMQP.
+// AmqpMessage
 type AmqpMessage struct {
 	OwnerID string `json:"ownerId"`
 	Data    []byte `json:"data"`
 }
 
-// Routing keys - using consistent event/command patterns
+// Routing keys
 const (
 	// Trip events (trip.event.*)
 	TripEventCreated             = "trip.event.created"
