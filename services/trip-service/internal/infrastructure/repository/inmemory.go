@@ -5,6 +5,9 @@ import (
 	"fmt"
 
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/domain"
+
+	pbd "github.com/n-korel/nexus-drive-go/shared/proto/driver"
+	pb "github.com/n-korel/nexus-drive-go/shared/proto/trip"
 )
 
 type inMemoryRepository struct {
@@ -17,6 +20,33 @@ func NewInMemoryRepository() *inMemoryRepository {
 		trips: make(map[string]*domain.TripModel),
 		rideFares: make(map[string]*domain.RideFareModel),
 	}
+}
+
+func (r *inMemoryRepository) GetTripByID(ctx context.Context, id string) (*domain.TripModel, error) {
+	trip, ok := r.trips[id]
+	if !ok {
+		return nil, nil
+	}
+	return trip, nil
+}
+
+func (r *inMemoryRepository) UpdateTrip(ctx context.Context, tripID string, status string, driver *pbd.Driver) error {
+	trip, ok := r.trips[tripID]
+	if !ok {
+		return fmt.Errorf("trip not found with ID: %s", tripID)
+	}
+
+	trip.Status = status
+
+	if driver != nil {
+		trip.Driver = &pb.TripDriver{
+			Id:             driver.Id,
+			Name:           driver.Name,
+			CarPlate:       driver.CarPlate,
+			ProfilePicture: driver.ProfilePicture,
+		}
+	}
+	return nil
 }
 
 

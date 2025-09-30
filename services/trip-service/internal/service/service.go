@@ -10,6 +10,7 @@ import (
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/domain"
 	tripTypes "github.com/n-korel/nexus-drive-go/services/trip-service/pkg/types"
 	"github.com/n-korel/nexus-drive-go/shared/env"
+	pbd "github.com/n-korel/nexus-drive-go/shared/proto/driver"
 	"github.com/n-korel/nexus-drive-go/shared/proto/trip"
 	"github.com/n-korel/nexus-drive-go/shared/types"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -167,4 +168,14 @@ func getBaseFares() []*domain.RideFareModel {
 			TotalPriceInCents: 1000,
 		},
 	}
+}
+
+
+
+func (s *service) GetTripByID(ctx context.Context, id string) (*domain.TripModel, error) {
+	return s.repo.GetTripByID(ctx, id)
+}
+
+func (s *service) UpdateTrip(ctx context.Context, tripID string, status string, driver *pbd.Driver) error {
+	return s.repo.UpdateTrip(ctx, tripID, status, driver)
 }

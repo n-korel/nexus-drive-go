@@ -20,7 +20,7 @@ import (
 var GrpcAddr = ":9083"
 
 func main() {
-	rabbitMqURI := env.GetString("RABBITMQ_URI", "amqp://guest:guest@rabbitmq:5672/")
+	rabbitMQURI := env.GetString("RABBITMQ_URI", "amqp://guest:guest@rabbitmq:5672/")
 	
 	inMemoryRepo := repository.NewInMemoryRepository()
 	serv := service.NewService(inMemoryRepo)
@@ -41,7 +41,7 @@ func main() {
 	}
 
 	// RabbitMQ connection
-	rabbitmq, err := messaging.NewRabbitMQ(rabbitMqURI)
+	rabbitmq, err := messaging.NewRabbitMQ(rabbitMQURI)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,6 +50,10 @@ func main() {
 	log.Println("Starting RabbitMQ connection")
 
 	publisher := events.NewTripEventPublisher(rabbitmq)
+
+	// Start driver consumer
+	driverConsumer := events.NewDriverConsumer(rabbitmq, serv)
+	go driverConsumer.Listen()
 
 	// Starting gRPC server
 	grpcServer := grpcserver.NewServer()

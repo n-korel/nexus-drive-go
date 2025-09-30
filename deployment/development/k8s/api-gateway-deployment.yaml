@@ -25,12 +25,16 @@ spec:
               memory: "128Mi"
               cpu: "125m"
           env:
-            # Env variable
             - name: GATEWAY_HTTP_ADDR
               valueFrom:
                 configMapKeyRef:
                   key: GATEWAY_HTTP_ADDR
                   name: app-config
+            - name: RABBITMQ_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-credentials
+                  key: uri
 ---
 apiVersion: v1
 kind: Service
