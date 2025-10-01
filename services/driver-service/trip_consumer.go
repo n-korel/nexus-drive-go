@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math/rand"
 
 	"github.com/n-korel/nexus-drive-go/shared/contracts"
 	"github.com/n-korel/nexus-drive-go/shared/messaging"
@@ -69,8 +70,10 @@ func (c *tripConsumer) handleFindAndNotifyDrivers(ctx context.Context, payload m
 		return nil
 	}
 
+	// Random index for matching drivers
+	randomIndex := rand.Intn(len(suitableIDs))
 
-	suitableDriverID := suitableIDs[0]
+	suitableDriverID := suitableIDs[randomIndex]
 
 	marshalledEvent, err := json.Marshal(payload)
 	if err != nil {
