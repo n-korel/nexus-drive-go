@@ -3,9 +3,12 @@ module github.com/n-korel/nexus-drive-go
 go 1.24.6
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	go.mongodb.org/mongo-driver v1.17.4
 )
+
+require github.com/stripe/stripe-go/v81 v81.4.0 // indirect
 
 require (
 	github.com/mmcloughlin/geohash v0.10.0

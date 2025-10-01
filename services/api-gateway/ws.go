@@ -37,6 +37,8 @@ func handleRidersWebSocket(w http.ResponseWriter, r *http.Request, rb *messaging
 	// Initialize queue consumers
 	queues := []string{
 		messaging.NotifyDriverNoDriversFoundQueue,
+		messaging.NotifyDriverAssignQueue,
+		messaging.NotifyPaymentSessionCreatedQueue,
 	}
 
 	for _, q := range queues {
@@ -70,7 +72,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 	
 	userID := r.URL.Query().Get("userID")
 	if userID == "" {
-		log.Printf("No user ID provided")
+		log.Println("No user ID provided")
 		return
 	}
 	
@@ -80,7 +82,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 		return
 	}
 	
-	// Add connection to manager connection webscoket
+	// Add connection to manager websocket
 	connManager.Add(userID, conn)
 	
 	ctx := r.Context()
@@ -128,7 +130,6 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 	// Initialize queue consumers
 	queues := []string{
 		messaging.DriverCmdTripRequestQueue,
-		messaging.NotifyDriverAssignQueue,
 	}
 
 	for _, q := range queues {
@@ -142,7 +143,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Errpr reading message: %v", err)
+			log.Printf("Error reading message: %v", err)
 			break
 		}
 
@@ -153,7 +154,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 
 		var driverMsg driverMessage
 		if err := json.Unmarshal(message, &driverMsg); err != nil {
-			log.Printf("Error unmarshaling driver meage: %v", err)
+			log.Printf("Error unmarshaling driver message: %v", err)
 			continue
 		}
 

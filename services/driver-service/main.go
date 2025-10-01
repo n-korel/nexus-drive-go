@@ -20,6 +20,7 @@ func main() {
 
 	serv := NewService()
 
+	// Setup graceful shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
