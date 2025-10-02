@@ -133,3 +133,15 @@ k8s_yaml('./deployment/development/k8s/payment-service-deployment.yaml')
 k8s_resource('payment-service', resource_deps=['payment-service-compile', 'rabbitmq'], labels="services")
 
 ### End of Payment Service ###
+### Web Frontend ###
+
+docker_build(
+  'github.com/n-korel/nexus-drive-go/web',
+  '.',
+  dockerfile='./deployment/development/docker/web.Dockerfile',
+)
+
+k8s_yaml('./deployment/development/k8s/web-deployment.yaml')
+k8s_resource('web', port_forwards=3000, labels="frontend")
+
+### End of Web Frontend ###
