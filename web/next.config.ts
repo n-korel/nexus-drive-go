@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Загрузка фото Лего для водителей
-    domains: ["randomuser.me"],
+    // Load images from randomuser.me for Lego driver profile pictures
+    domains: ['randomuser.me'],
   },
   reactStrictMode: false,
 };
