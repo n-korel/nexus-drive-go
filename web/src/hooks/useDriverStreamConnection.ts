@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { WEBSOCKET_URL } from "../constants";
-import { Trip, Driver, CarPackageSlug } from '../types';
-import { ServerWsMessage, TripEvents, isValidWsMessage, isValidTripEvent, ClientWsMessage, BackendEndpoints } from '../contracts';
+import { Trip, Driver, CarPackageSlug } from "../types";
+import {
+  TripEvents,
+  isValidWsMessage,
+  isValidTripEvent,
+  ClientWsMessage,
+  BackendEndpoints,
+} from "../contracts";
 
 interface useDriverConnectionProps {
   location: {
@@ -17,9 +23,9 @@ export const useDriverStreamConnection = ({
   location,
   geohash,
   userID,
-  packageSlug
+  packageSlug,
 }: useDriverConnectionProps) => {
-  const [requestedTrip, setRequestedTrip] = useState<Trip | null>(null)
+  const [requestedTrip, setRequestedTrip] = useState<Trip | null>(null);
   const [tripStatus, setTripStatus] = useState<TripEvents | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -28,78 +34,98 @@ export const useDriverStreamConnection = ({
   useEffect(() => {
     if (!userID) return;
 
-    const websocket = new WebSocket(`${WEBSOCKET_URL}${BackendEndpoints.WS_DRIVERS}?userID=${userID}&packageSlug=${packageSlug}`);
+    const websocket = new WebSocket(
+      `${WEBSOCKET_URL}${BackendEndpoints.WS_DRIVERS}?userID=${userID}&packageSlug=${packageSlug}`
+    );
     setWs(websocket);
 
     websocket.onopen = () => {
       if (location) {
-        // Send initial location
-        websocket.send(JSON.stringify({
-          type: TripEvents.DriverLocation,
-          data: {
-            location,
-            geohash,
-          }
-        }));
+        websocket.send(
+          JSON.stringify({
+            type: TripEvents.DriverLocation,
+            data: {
+              location,
+              geohash,
+            },
+          })
+        );
       }
     };
 
     websocket.onmessage = (event) => {
-      const message = JSON.parse(event.data) as ServerWsMessage;
+      try {
+        const message = JSON.parse(event.data);
 
-      if (!message || !isValidWsMessage(message)) {
-        setError(`Unknown message type "${message}", allowed types are: ${Object.values(TripEvents).join(', ')}`);
-        return;
-      }
+        if (!isValidWsMessage(message)) {
+          setError(`Unknown message type "${message?.type}"`);
+          return;
+        }
 
-      switch (message.type) {
-        case TripEvents.DriverTripRequest:
-          const trip = (message.data?.trip) ?? message.data;
-          setRequestedTrip(trip);
-          break;
-        case TripEvents.DriverRegister:
-          setDriver(message.data);
-          break;
-      }
-
-
-      if (isValidTripEvent(message.type)) {
-        setTripStatus(message.type);
-      } else {
-        setError(`Unknown message type "${message.type}", allowed types are: ${Object.values(TripEvents).join(', ')}`);
+        switch (message.type) {
+          case TripEvents.DriverTripRequest:
+            const tripData = message.data as Trip;
+            setRequestedTrip(tripData);
+            setTripStatus(message.type);
+            break;
+          case TripEvents.DriverRegister:
+            setDriver(message.data as Driver);
+            setTripStatus(message.type);
+            break;
+          default:
+            if (isValidTripEvent(message.type)) {
+              setTripStatus(message.type);
+            }
+        }
+      } catch (err) {
+        console.error("Error parsing WebSocket message:", err);
+        setError("Failed to parse server message");
       }
     };
 
     websocket.onclose = () => {
-      console.log('WebSocket closed');
+      console.log("WebSocket closed");
+      setWs(null);
     };
 
     websocket.onerror = (event) => {
-      setError('WebSocket error occurred');
-      console.error('WebSocket error:', event);
+      setError("WebSocket error occurred");
+      console.error("WebSocket error:", event);
     };
 
     return () => {
-      console.log('Closing WebSocket');
+      console.log("Closing WebSocket");
       if (websocket.readyState === WebSocket.OPEN) {
         websocket.close();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userID]);
+  }, [userID, packageSlug, location, geohash]);
 
   const sendMessage = (message: ClientWsMessage) => {
     if (ws?.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(message));
+      try {
+        ws.send(JSON.stringify(message));
+      } catch (err) {
+        console.error("Error sending message:", err);
+        setError("Failed to send message");
+      }
     } else {
-      setError('WebSocket is not connected');
+      setError("WebSocket is not connected");
     }
   };
 
   const resetTripStatus = () => {
     setTripStatus(null);
     setRequestedTrip(null);
-  }
+  };
 
-  return { error, tripStatus, driver, requestedTrip, resetTripStatus, sendMessage, setTripStatus };
-}
+  return {
+    error,
+    tripStatus,
+    driver,
+    requestedTrip,
+    resetTripStatus,
+    sendMessage,
+    setTripStatus,
+  };
+};

@@ -1,10 +1,8 @@
 "use client";
 
-// Assets
 import "leaflet/dist/leaflet.css";
-// Fix for default marker icon
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
+const iconUrl = "/node_modules/leaflet/dist/images/marker-icon.png";
+const iconShadowUrl = "/node_modules/leaflet/dist/images/marker-shadow.png";
 import dynamic from "next/dynamic";
 import { Button } from "../components/ui/button";
 import { useState, Suspense } from "react";
@@ -25,8 +23,8 @@ const RiderMap = dynamic(() => import("../components/RiderMap"), {
 if (typeof window !== "undefined") {
   import("leaflet").then((L) => {
     const DefaultIcon = L.default.icon({
-      iconUrl: icon.src,
-      shadowUrl: iconShadow.src,
+      iconUrl,
+      shadowUrl: iconShadowUrl,
       iconSize: [25, 41],
       iconAnchor: [12, 41],
     });
