@@ -32,8 +32,8 @@ func main() {
 
 	log.Println("Starting RabbitMQ connection")
 
-	mux.HandleFunc("POST /trip/preview", enableCORS(handleTripPreview))
-	mux.HandleFunc("POST /trip/start", enableCORS(handleTripStart))
+	mux.HandleFunc("/trip/preview", enableCORS(handleTripPreview))
+	mux.HandleFunc("/trip/start", enableCORS(handleTripStart))
 	mux.HandleFunc("/ws/drivers", func(w http.ResponseWriter, r *http.Request) {
 		handleDriversWebSocket(w, r, rabbitmq)
 	} )

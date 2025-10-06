@@ -102,15 +102,37 @@ export const useDriverStreamConnection = ({
   }, [userID, packageSlug, location, geohash]);
 
   const sendMessage = (message: ClientWsMessage) => {
-    if (ws?.readyState === WebSocket.OPEN) {
-      try {
-        ws.send(JSON.stringify(message));
-      } catch (err) {
-        console.error("Error sending message:", err);
-        setError("Failed to send message");
-      }
-    } else {
-      setError("WebSocket is not connected");
+    if (!ws) {
+      setError("WebSocket is not initialized");
+      return;
+    }
+
+    switch (ws.readyState) {
+      case WebSocket.CONNECTING:
+        ws.addEventListener(
+          "open",
+          () => {
+            try {
+              ws.send(JSON.stringify(message));
+            } catch (err) {
+              console.error("Error sending message after open:", err);
+              setError("Failed to send message");
+            }
+          },
+          { once: true }
+        );
+        break;
+      case WebSocket.OPEN:
+        try {
+          ws.send(JSON.stringify(message));
+        } catch (err) {
+          console.error("Error sending message:", err);
+          setError("Failed to send message");
+        }
+        break;
+      default:
+        setError("WebSocket is not connected");
+        break;
     }
   };
 

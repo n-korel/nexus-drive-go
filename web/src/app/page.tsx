@@ -90,7 +90,7 @@ function HomeContent() {
         <div className="flex flex-col items-center justify-center h-screen gap-6 px-4">
           <div className="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md w-full">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Welcome to RideShare
+              Welcome to NexusDriveGo
             </h2>
             <p className="text-gray-600 mb-8">
               Choose how you&apos;d like to use our service today

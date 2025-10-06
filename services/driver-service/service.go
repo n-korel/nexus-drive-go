@@ -17,7 +17,6 @@ type Service struct {
 
 type driverInMap struct {
 	Driver *pb.Driver
-	//gRPC streaming later on
 }
 
 func NewService() *Service {
@@ -27,6 +26,8 @@ func NewService() *Service {
 }
 
 func (s *Service) FindAvailableDrivers(packageType string) []string {
+    s.mu.RLock()
+    defer s.mu.RUnlock()
 	var matchingDrivers []string
 
 	for _, driver := range s.drivers {
@@ -35,9 +36,6 @@ func (s *Service) FindAvailableDrivers(packageType string) []string {
 		}
 	}
 
-	if len(matchingDrivers) == 0 {
-		return []string{}
-	}
 
 	return matchingDrivers
 }
@@ -82,6 +80,7 @@ func (s *Service) UnregisterDriver(driverId string) {
 	for i, driver := range s.drivers {
 		if driver.Driver.Id == driverId {
 			s.drivers = append(s.drivers[:i], s.drivers[i+1:]...)
+			break
 		}
 	}
 }

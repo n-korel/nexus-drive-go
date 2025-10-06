@@ -11,7 +11,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import { getGeohashBounds } from "../utils/geohash";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { MapClickHandler } from "./MapClickHandler";
 import { Button } from "./ui/button";
 import {
@@ -56,9 +56,17 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
   const userID = useMemo(() => crypto.randomUUID(), []);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const location = {
-    latitude: 37.7749,
-    longitude: -122.4194,
+    latitude: 59.92114231319563,
+    longitude: 30.31694536872504,
   };
 
   const {

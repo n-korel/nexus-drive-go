@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/n-korel/nexus-drive-go/services/api-gateway/grpc_clients"
 	"github.com/n-korel/nexus-drive-go/shared/contracts"
@@ -35,7 +37,9 @@ func handleTripStart(w http.ResponseWriter, r *http.Request) {
 
 
 	// CALL TRIP SERVICE
-	trip, err := tripService.Client.CreateTrip(r.Context(), reqBody.toProto())
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+	trip, err := tripService.Client.CreateTrip(ctx, reqBody.toProto())
 	if err != nil {
 		log.Printf("Failed to start trip: %v", err)
 		http.Error(w, "Failed to start trip", http.StatusInternalServerError)
