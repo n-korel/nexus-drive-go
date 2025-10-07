@@ -4,6 +4,7 @@ import (
 	"os"
 
 	pb "github.com/n-korel/nexus-drive-go/shared/proto/driver"
+	"github.com/n-korel/nexus-drive-go/shared/tracing"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -19,7 +20,12 @@ func NewDriverServiceClient() (*driverServiceClient, error) {
 		driverServiceURL = "driver-service:9082"
 	}
 
-	conn, err := grpc.NewClient(driverServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dialOptions := append(
+		tracing.DialOptionsWithTracing(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+
+	conn, err := grpc.NewClient(driverServiceURL, dialOptions...)
 	if err != nil {
 		return nil, err
 	}

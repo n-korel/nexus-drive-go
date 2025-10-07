@@ -33,32 +33,32 @@ func handleRidersWebSocket(w http.ResponseWriter, r *http.Request, rb *messaging
 	// Add connection to manager connection webscoket
 	connManager.Add(userID, conn)
 	defer connManager.Remove(userID)
-
+	
 	// Initialize queue consumers
 	queues := []string{
 		messaging.NotifyDriverNoDriversFoundQueue,
 		messaging.NotifyDriverAssignQueue,
 		messaging.NotifyPaymentSessionCreatedQueue,
 	}
-
+	
 	for _, q := range queues {
 		consumer := messaging.NewQueueConsumer(rb, connManager, q)
-
+		
 		if err := consumer.Start(); err != nil {
 			log.Printf("Failed to start consumer for queue: %s: err: %v", q, err)
 		}
 	}
-
+	
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Errpr reading message: %v", err)
+			log.Printf("Error reading message: %v", err)
 			break
 		}
-
+		
 		log.Printf("Received message: %s", message)
 	}
-
+	
 }
 
 func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messaging.RabbitMQ) {
@@ -67,7 +67,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 		log.Printf("WebSocket upgrade failed: %v", err)
 		return
 	}
-
+	
 	defer conn.Close()
 	
 	userID := r.URL.Query().Get("userID")
@@ -82,7 +82,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 		return
 	}
 	
-	// Add connection to manager websocket
+	// Add connection to manager connection webscoket
 	connManager.Add(userID, conn)
 	
 	ctx := r.Context()
@@ -107,26 +107,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 		log.Println("Driver unregistered: ", userID)
 	}()
 
-
-	// CALL DRIVER SERVICE
-	driverData, err := driverService.Client.RegisterDriver(ctx, &driver.RegisterDriverRequest{
-		DriverID:    userID,
-		PackageSlug: packageSlug,
-	})
-	if err != nil {
-		log.Printf("Error registering driver: %v", err)
-		return
-	}
-
-
-	if err := connManager.SendMessage(userID, contracts.WSMessage{
-		Type: contracts.DriverCmdRegister,
-		Data: driverData.Driver,
-	}); err != nil {
-		log.Printf("Error sending message: %v", err)
-		return
-	}
-
+	
 	// Initialize queue consumers
 	queues := []string{
 		messaging.DriverCmdTripRequestQueue,
@@ -139,7 +120,28 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 			log.Printf("Failed to start consumer for queue: %s: err: %v", q, err)
 		}
 	}
+	
+	driverData, err := driverService.Client.RegisterDriver(ctx, &driver.RegisterDriverRequest{
+		DriverID:    userID,
+		PackageSlug: packageSlug,
+	})
+	if err != nil {
+		log.Printf("Error registering driver: %v", err)
+		return
+	}
 
+
+	// Send driver registration confirmation
+	if err := connManager.SendMessage(userID, contracts.WSMessage{
+		Type: contracts.DriverCmdRegister,
+		Data: driverData.Driver,
+	}); err != nil {
+		log.Printf("Error sending message: %v", err)
+		return
+	}
+
+
+	// Handle incoming messages from driver
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
@@ -157,6 +159,7 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 			log.Printf("Error unmarshaling driver message: %v", err)
 			continue
 		}
+
 
 		// Handle different message type
 		switch driverMsg.Type {

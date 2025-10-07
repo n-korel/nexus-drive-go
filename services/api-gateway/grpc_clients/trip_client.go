@@ -4,6 +4,7 @@ import (
 	"os"
 
 	pb "github.com/n-korel/nexus-drive-go/shared/proto/trip"
+	"github.com/n-korel/nexus-drive-go/shared/tracing"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -19,7 +20,12 @@ func NewTripServiceClient() (*tripServiceClient, error) {
 		tripServiceURL = "trip-service:9083"
 	}
 
-	conn, err := grpc.NewClient(tripServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dialOptions := append(
+		tracing.DialOptionsWithTracing(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+
+	conn, err := grpc.NewClient(tripServiceURL, dialOptions...)
 	if err != nil {
 		return nil, err
 	}
