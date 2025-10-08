@@ -111,7 +111,8 @@ func handleStripeWebhook(w http.ResponseWriter, r *http.Request, rb *messaging.R
 
 	webhookKey := env.GetString("STRIPE_WEBHOOK_KEY", "")
 	if webhookKey == "" {
-		log.Printf("Webhook key is required")
+		log.Printf("Webhook key is not configured")
+    	http.Error(w, "Webhook configuration error", http.StatusInternalServerError)
 		return
 	}
 

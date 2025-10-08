@@ -27,17 +27,17 @@ func NewService() *Service {
 
 func (s *Service) FindAvailableDrivers(packageType string) []string {
     s.mu.RLock()
-    defer s.mu.RUnlock()
-	var matchingDrivers []string
+    driversCopy := make([]*driverInMap, len(s.drivers))
+    copy(driversCopy, s.drivers)
+    s.mu.RUnlock()
 
-	for _, driver := range s.drivers {
-		if driver.Driver.PackageSlug == packageType {
-			matchingDrivers = append(matchingDrivers, driver.Driver.Id)
-		}
-	}
-
-
-	return matchingDrivers
+    var matchingDrivers []string
+    for _, driver := range driversCopy {
+        if driver.Driver.PackageSlug == packageType {
+            matchingDrivers = append(matchingDrivers, driver.Driver.Id)
+        }
+    }
+    return matchingDrivers
 }
 
 

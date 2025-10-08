@@ -1,6 +1,7 @@
 package grpc_clients
 
 import (
+	"log"
 	"os"
 
 	pb "github.com/n-korel/nexus-drive-go/shared/proto/driver"
@@ -40,9 +41,9 @@ func NewDriverServiceClient() (*driverServiceClient, error) {
 
 
 func (c *driverServiceClient) Close() {
-	if c.conn != nil {
-		if err := c.conn.Close(); err != nil {
-			return
-		}
-	}
+    if c.conn != nil {
+        if err := c.conn.Close(); err != nil {
+            log.Printf("Failed to close gRPC connection: %v", err)
+        }
+    }
 }
