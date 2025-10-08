@@ -64,7 +64,18 @@ export const useDriverStreamConnection = ({
 
         switch (message.type) {
           case TripEvents.DriverTripRequest:
-            const tripData = message.data as Trip;
+            let tripData: Trip;
+
+            if (
+              message.data &&
+              typeof message.data === "object" &&
+              "trip" in message.data
+            ) {
+              tripData = message.data.trip as Trip;
+            } else {
+              tripData = message.data as Trip;
+            }
+
             setRequestedTrip(tripData);
             setTripStatus(message.type);
             break;

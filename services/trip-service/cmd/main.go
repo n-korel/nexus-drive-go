@@ -12,6 +12,7 @@ import (
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/grpc"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/infrastructure/repository"
 	"github.com/n-korel/nexus-drive-go/services/trip-service/internal/service"
+	"github.com/n-korel/nexus-drive-go/shared/db"
 	"github.com/n-korel/nexus-drive-go/shared/env"
 	"github.com/n-korel/nexus-drive-go/shared/messaging"
 	"github.com/n-korel/nexus-drive-go/shared/tracing"
@@ -39,8 +40,19 @@ func main() {
 	defer cancel()
 	defer sh(ctx)
 
-	inMemoryRepo := repository.NewInMemoryRepository()
-	serv := service.NewService(inMemoryRepo)
+	// Initialize MongoDB
+	mongoClient, err := db.NewMongoClient(ctx, db.NewMongoDefaultConfig())
+	if err != nil {
+		log.Fatalf("Failed to initialize MongoDB, err: %v", err)
+	}
+	defer mongoClient.Disconnect(ctx)
+
+	mongoDb := db.GetDatabase(mongoClient, db.NewMongoDefaultConfig())
+
+
+	// inMemoryRepo := repository.NewInMemoryRepository()
+	mongoDBRepo := repository.NewMongoRepository(mongoDb)
+	serv := service.NewService(mongoDBRepo)
 
 	// Setup graceful shutdown
 	go func() {
