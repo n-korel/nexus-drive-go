@@ -77,13 +77,17 @@ func (cm *ConnectionManager) SendMessage(id string, message contracts.WSMessage)
 	cm.mutex.RLock()
 	wrapper, exists := cm.connections[id]
 	cm.mutex.RUnlock()
-
+	
 	if !exists {
 		return ErrConnectionNotFound
 	}
-
+	
 	wrapper.mutex.Lock()
 	defer wrapper.mutex.Unlock()
-
+	
+	if wrapper.conn == nil {
+		return ErrConnectionNotFound
+	}
+	
 	return wrapper.conn.WriteJSON(message)
 }

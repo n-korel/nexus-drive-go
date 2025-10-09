@@ -22,15 +22,14 @@ export function DriverList({
   return (
     <div className="flex items-center justify-center p-4 min-h-screen bg-black/20">
       <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full">
-        <h2 className="text-xl font-semibold mb-2">Select your desired ride</h2>
+        <h2 className="text-xl font-semibold mb-2">Выберите тип поездки</h2>
         <p className="text-sm text-gray-500 mb-6">
-          Routing for {convertMetersToKilometers(trip?.distance ?? 0)}
+          Маршрут: {convertMetersToKilometers(trip?.distance ?? 0)}
         </p>
         <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
           <Clock className="w-4 h-4" />
           <span>
-            You&apos;ll arrive in:{" "}
-            {convertSecondsToMinutes(trip?.duration ?? 0)}
+            Время в пути: {convertSecondsToMinutes(trip?.duration ?? 0)}
           </span>
         </div>
         <div className="space-y-4">
@@ -73,7 +72,7 @@ export function DriverList({
             className="w-full"
             onClick={() => onCancel()}
           >
-            Back to Map
+            Назад к карте
           </Button>
         </div>
       </div>

@@ -39,11 +39,7 @@ export const DriverCard = ({
           </p>
         )}
 
-        {packageSlug && (
-          <p className="text-sm">
-            <span className="font-mono">{packageSlug}</span> driver
-          </p>
-        )}
+        {packageSlug && <p className="text-sm">Водитель</p>}
       </CardContent>
     </Card>
   );

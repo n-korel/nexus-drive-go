@@ -253,13 +253,13 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
               icon={driverMarker}
             >
               <Popup>
-                Driver ID: {driver?.id}
+                ID водителя: {driver?.id}
                 <br />
                 Geohash: {driver?.geohash}
                 <br />
-                Name: {driver?.name}
+                Имя: {driver?.name}
                 <br />
-                Car Plate: {driver?.carPlate}
+                Номер машины: {driver?.carPlate}
                 <br />
                 {driver?.profilePicture && (
                   <Image
@@ -275,14 +275,14 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
 
           {destination && (
             <Marker position={destination} icon={userMarker}>
-              <Popup>Destination</Popup>
+              <Popup>Пункт назначения</Popup>
             </Marker>
           )}
 
           {selectedCarPackage && (
             <div className="mt-4 z-[9999] absolute bottom-0 right-0">
               <Button className="w-full">
-                Request Ride with {selectedCarPackage.packageSlug}
+                Заказать поездку {selectedCarPackage.packageSlug}
               </Button>
             </div>
           )}
@@ -294,7 +294,7 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
 
         {isLoadingPreview && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-lg z-[1000]">
-            <p className="text-sm">Loading route preview...</p>
+            <p className="text-sm">Загрузка маршрута...</p>
           </div>
         )}
       </div>

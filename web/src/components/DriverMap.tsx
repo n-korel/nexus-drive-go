@@ -158,7 +158,7 @@ export const DriverMap = ({ packageSlug }: { packageSlug: CarPackageSlug }) => {
             icon={driverMarker}
           >
             <Popup>
-              Driver ID: {userID}
+              ID водителя: {userID}
               <br />
               Geohash: {driverGeohash}
             </Popup>
@@ -169,7 +169,7 @@ export const DriverMap = ({ packageSlug }: { packageSlug: CarPackageSlug }) => {
               position={[startLocation.latitude, startLocation.longitude]}
               icon={startLocationMarker}
             >
-              <Popup>Start Location</Popup>
+              <Popup>Точка отправления</Popup>
             </Marker>
           )}
 
@@ -178,7 +178,7 @@ export const DriverMap = ({ packageSlug }: { packageSlug: CarPackageSlug }) => {
               position={[destination.latitude, destination.longitude]}
               icon={destinationMarker}
             >
-              <Popup>Destination</Popup>
+              <Popup>Пункт назначения</Popup>
             </Marker>
           )}
 

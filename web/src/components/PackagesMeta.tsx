@@ -11,23 +11,23 @@ export const PackagesMeta: Record<
   }
 > = {
   [CarPackageSlug.SEDAN]: {
-    name: "Sedan",
+    name: "Седан",
     icon: <Car />,
-    description: "Economic and comfortable",
+    description: "Экономичный и комфортный вариант",
   },
   [CarPackageSlug.SUV]: {
-    name: "SUV",
+    name: "Внедорожник",
     icon: <Truck />,
-    description: "Spacious ride for groups",
+    description: "Просторный вариант для компаний",
   },
   [CarPackageSlug.VAN]: {
-    name: "Van",
+    name: "Минивэн",
     icon: <Bus />,
-    description: "Perfect for larger groups",
+    description: "Идеален для больших групп",
   },
   [CarPackageSlug.LUXURY]: {
-    name: "Luxury",
+    name: "Премиум",
     icon: <Crown />,
-    description: "Premium experience",
+    description: "Максимальный комфорт и стиль",
   },
 };

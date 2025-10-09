@@ -32,8 +32,8 @@ export const RiderTripOverview = ({
   if (!trip) {
     return (
       <TripOverviewCard
-        title="Start a trip"
-        description="Click on the map to set a destination"
+        title="Начните поездку"
+        description="Нажмите на карту, чтобы выбрать пункт назначения"
       />
     );
   }
@@ -41,17 +41,17 @@ export const RiderTripOverview = ({
   if (status === TripEvents.PaymentSessionCreated && paymentSession) {
     return (
       <TripOverviewCard
-        title="Payment Required"
-        description="Please complete the payment to confirm your trip"
+        title="Требуется оплата"
+        description="Пожалуйста, завершите оплату, чтобы подтвердить поездку"
       >
         <div className="flex flex-col gap-4">
           <DriverCard driver={assignedDriver} />
 
           <div className="text-sm text-gray-500">
             <p>
-              Amount: {paymentSession.amount} {paymentSession.currency}
+              Сумма: {paymentSession.amount} {paymentSession.currency}
             </p>
-            <p>Trip ID: {paymentSession.tripID}</p>
+            <p>ID поездки: {paymentSession.tripID}</p>
           </div>
           <StripePaymentButton paymentSession={paymentSession} />
         </div>
@@ -62,11 +62,11 @@ export const RiderTripOverview = ({
   if (status === TripEvents.NoDriversFound) {
     return (
       <TripOverviewCard
-        title="No drivers found"
-        description="No drivers found for your trip, please try again later"
+        title="Водители не найдены"
+        description="Не удалось найти водителей для вашей поездки. Пожалуйста, попробуйте позже."
       >
         <Button variant="outline" className="w-full" onClick={onCancel}>
-          Go back
+          Назад
         </Button>
       </TripOverviewCard>
     );
@@ -75,14 +75,12 @@ export const RiderTripOverview = ({
   if (status === TripEvents.DriverAssigned) {
     return (
       <TripOverviewCard
-        title="Driver assigned!"
-        description="Your driver is on the way, waiting for payment confirmation to show..."
+        title="Водитель назначен!"
+        description="Ваш водитель в пути. Ожидаем подтверждения оплаты..."
       >
-        <div className="flex flex-col space-y-3 justify-center items-center mb-4">
-          {/* <p>Driver: {trip.id}</p> */}
-        </div>
+        <div className="flex flex-col space-y-3 justify-center items-center mb-4" />
         <Button variant="destructive" className="w-full" onClick={onCancel}>
-          Cancel current trip
+          Отменить поездку
         </Button>
       </TripOverviewCard>
     );
@@ -91,11 +89,11 @@ export const RiderTripOverview = ({
   if (status === TripEvents.Completed) {
     return (
       <TripOverviewCard
-        title="Trip completed!"
-        description="Your trip is completed, thank you for using our service!"
+        title="Поездка завершена!"
+        description="Спасибо, что воспользовались нашим сервисом!"
       >
         <Button variant="outline" className="w-full" onClick={onCancel}>
-          Go back
+          Назад
         </Button>
       </TripOverviewCard>
     );
@@ -104,11 +102,11 @@ export const RiderTripOverview = ({
   if (status === TripEvents.Cancelled) {
     return (
       <TripOverviewCard
-        title="Trip cancelled!"
-        description="Your trip is cancelled, please try again later"
+        title="Поездка отменена"
+        description="Поездка отменена. Пожалуйста, попробуйте позже."
       >
         <Button variant="outline" className="w-full" onClick={onCancel}>
-          Go back
+          Назад
         </Button>
       </TripOverviewCard>
     );
@@ -117,8 +115,8 @@ export const RiderTripOverview = ({
   if (status === TripEvents.Created) {
     return (
       <TripOverviewCard
-        title="Looking for a driver"
-        description="Your trip is confirmed! We're matching you with a driver, it should not take long."
+        title="Поиск водителя"
+        description="Ваша поездка подтверждена. Мы подбираем водителя — это займёт немного времени."
       >
         <div className="flex flex-col space-y-3 justify-center items-center mb-4">
           <Skeleton className="h-[125px] w-[250px] rounded-xl" />
@@ -131,13 +129,13 @@ export const RiderTripOverview = ({
         <div className="flex flex-col items-center justify-center gap-2">
           {trip?.duration && (
             <h3 className="text-sm font-medium text-gray-700 mb-2">
-              Arriving in: {convertSecondsToMinutes(trip?.duration)} at your
-              destination ({convertMetersToKilometers(trip?.distance ?? 0)})
+              Прибытие через {convertSecondsToMinutes(trip?.duration)} мин,
+              расстояние {convertMetersToKilometers(trip?.distance ?? 0)} км
             </h3>
           )}
 
           <Button variant="destructive" className="w-full" onClick={onCancel}>
-            Cancel
+            Отменить
           </Button>
         </div>
       </TripOverviewCard>
@@ -156,7 +154,7 @@ export const RiderTripOverview = ({
 
   return (
     <Card className="w-full md:max-w-[500px] z-[9999] flex-[0.3]">
-      No trip ride fares, please refresh the page
+      Нет данных о тарифах поездки. Обновите страницу.
     </Card>
   );
 };

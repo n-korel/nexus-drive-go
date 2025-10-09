@@ -1,6 +1,7 @@
 package grpc_clients
 
 import (
+	"log"
 	"os"
 
 	pb "github.com/n-korel/nexus-drive-go/shared/proto/trip"
@@ -42,7 +43,7 @@ func NewTripServiceClient() (*tripServiceClient, error) {
 func (c *tripServiceClient) Close() {
 	if c.conn != nil {
 		if err := c.conn.Close(); err != nil {
-			return
+			log.Printf("Failed to close gRPC connection: %v", err)
 		}
 	}
 }

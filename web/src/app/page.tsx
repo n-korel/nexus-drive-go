@@ -65,11 +65,9 @@ function HomeContent() {
                 </svg>
               </div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Payment Successful!
+                Оплата прошла успешно!
               </h1>
-              <p className="text-gray-600 mt-2">
-                Your ride has been confirmed.
-              </p>
+              <p className="text-gray-600 mt-2">Ваша поездка подтверждена.</p>
             </div>
             <Button
               className="w-full text-lg py-6"
@@ -89,25 +87,25 @@ function HomeContent() {
       {userType === null && (
         <div className="flex flex-col items-center justify-center h-screen gap-6 px-4">
           <div className="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md w-full">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Welcome to NexusDriveGo
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              Добро пожаловать в NexusDriveGo
             </h2>
             <p className="text-gray-600 mb-8">
-              Choose how you&apos;d like to use our service today
+              Выберите, как вы хотите использовать наш сервис
             </p>
             <div className="space-y-4">
               <Button
                 className="w-full text-lg py-6 bg-primary hover:bg-primary/90"
                 onClick={() => handleClick("rider")}
               >
-                I Need a Ride
+                Я - пассажир
               </Button>
               <Button
                 className="w-full text-lg py-6"
                 variant="outline"
                 onClick={() => handleClick("driver")}
               >
-                I Want to Drive
+                Я - водитель
               </Button>
             </div>
           </div>

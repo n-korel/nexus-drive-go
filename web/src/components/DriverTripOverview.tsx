@@ -19,8 +19,8 @@ export const DriverTripOverview = ({
   if (!trip) {
     return (
       <TripOverviewCard
-        title="Waiting for a rider..."
-        description="Waiting for a rider to request a trip..."
+        title="Ожидание пассажира..."
+        description="Ожидаем, пока пассажир запросит поездку..."
       />
     );
   }
@@ -28,13 +28,13 @@ export const DriverTripOverview = ({
   if (status === TripEvents.DriverTripRequest) {
     return (
       <TripOverviewCard
-        title="Trip request received!"
-        description="A trip has been requested, check the route and accept the trip if you can take it."
+        title="Новый запрос на поездку!"
+        description="Поступил запрос на поездку. Проверьте маршрут и подтвердите, если можете принять заказ."
       >
         <div className="flex flex-col gap-2">
-          <Button onClick={onAcceptTrip}>Accept trip</Button>
+          <Button onClick={onAcceptTrip}>Принять поездку</Button>
           <Button variant="outline" onClick={onDeclineTrip}>
-            Decline trip
+            Отклонить поездку
           </Button>
         </div>
       </TripOverviewCard>
@@ -44,16 +44,16 @@ export const DriverTripOverview = ({
   if (status === TripEvents.DriverTripAccept) {
     return (
       <TripOverviewCard
-        title="All set!"
-        description="You can now start the trip"
+        title="Готово!"
+        description="Теперь вы можете начать поездку."
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-bold">Trip details</h3>
+            <h3 className="text-lg font-bold">Детали поездки</h3>
             <p className="text-sm text-gray-500">
-              Trip ID: {trip.id}
+              ID поездки: {trip.id}
               <br />
-              Rider ID: {trip.userID}
+              ID пассажира: {trip.userID}
             </p>
           </div>
         </div>
