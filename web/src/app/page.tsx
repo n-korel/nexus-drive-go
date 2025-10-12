@@ -3,6 +3,7 @@
 import "leaflet/dist/leaflet.css";
 const iconUrl = "/node_modules/leaflet/dist/images/marker-icon.png";
 const iconShadowUrl = "/node_modules/leaflet/dist/images/marker-shadow.png";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Button } from "../components/ui/button";
 import { useState, Suspense } from "react";
@@ -87,6 +88,16 @@ function HomeContent() {
       {userType === null && (
         <div className="flex flex-col items-center justify-center h-screen gap-6 px-4">
           <div className="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md w-full">
+            <div className="mb-6">
+              <Image
+                src="/nexus-log.png"
+                alt="NexusDriveGo Logo"
+                width={200}
+                height={200}
+                className="mx-auto mb-4 bg-white"
+                priority
+              />
+            </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
               Добро пожаловать в NexusDriveGo
             </h2>
